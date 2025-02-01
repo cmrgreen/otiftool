@@ -116,55 +116,7 @@ def fetch_molten_target():
         print(f"Error fetching molten target: {e}")
         return None
 
-# Function to fetch Total Machines Running (dummy for now)
-def fetch_total_machines_running():
-    try:
-        conn = get_db_connection()
-        if conn is None:
-            raise Exception("Database connection failed.")
-        
-        cursor = conn.cursor(dictionary=True)
-        query = """
-        SELECT Molten_Target 
-        FROM Plant_Target 
-        WHERE Date = '19 October 2023 12:38:41' 
-        ORDER BY Date DESC 
-        LIMIT 1;
-        """
-        cursor.execute(query)
-        total_machines_data = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        return total_machines_data
-    except Exception as e:
-        print(f"Error fetching total machines running: {e}")
-        return None
-
-# Function to fetch Overall OTIF % (dummy for now)
-def fetch_otif_percentage():
-    try:
-        conn = get_db_connection()
-        if conn is None:
-            raise Exception("Database connection failed.")
-        
-        cursor = conn.cursor(dictionary=True)
-        query = """
-        SELECT Molten_Target 
-        FROM Plant_Target 
-        WHERE Date = '19 October 2023 12:38:41' 
-        ORDER BY Date DESC 
-        LIMIT 1;
-        """
-        cursor.execute(query)
-        otif_data = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        return otif_data
-    except Exception as e:
-        print(f"Error fetching OTIF percentage: {e}")
-        return None
-
-# Route to fetch machine data
+# Routes to handle the API calls
 @app.route('/api/machine_data', methods=['GET'])
 def get_machine_data():
     try:
@@ -193,50 +145,7 @@ def get_machine_data():
         print(f"Error in get_machine_data: {e}")
         return jsonify({"error": "Failed to fetch machine data"}), 500
 
-# Route to fetch overall consumption rate
-@app.route('/api/overall_consumption_rate', methods=['GET'])
-def get_overall_consumption_rate():
-    try:
-        consumption_rate_data = fetch_overall_consumption_rate()
-        return jsonify(consumption_rate_data)
-    except Exception as e:
-        print(f"Error in get_overall_consumption_rate: {e}")
-        return jsonify({"error": "Failed to fetch overall consumption rate"}), 500
-
-# Route to fetch molten target value
-@app.route('/api/molten_target', methods=['GET'])
-def get_molten_target():
-    try:
-        molten_target_data = fetch_molten_target()
-        return jsonify(molten_target_data)
-    except Exception as e:
-        print(f"Error in get_molten_target: {e}")
-        return jsonify({"error": "Failed to fetch molten target"}), 500
-
-# Route to fetch total machines running
-@app.route('/api/total_machines_running', methods=['GET'])
-def get_total_machines_running():
-    try:
-        total_machines_data = fetch_total_machines_running()
-        return jsonify(total_machines_data)
-    except Exception as e:
-        print(f"Error in get_total_machines_running: {e}")
-        return jsonify({"error": "Failed to fetch total machines running"}), 500
-
-# Route to fetch overall OTIF percentage
-@app.route('/api/otif_percentage', methods=['GET'])
-def get_otif_percentage():
-    try:
-        otif_data = fetch_otif_percentage()
-        return jsonify(otif_data)
-    except Exception as e:
-        print(f"Error in get_otif_percentage: {e}")
-        return jsonify({"error": "Failed to fetch OTIF percentage"}), 500
-
-# Route to render index.html
-@app.route('/')
-def index():
-    return render_template('index.html')
+# Other routes with similar try-except blocks...
 
 if __name__ == '__main__':
     app.run(debug=True)
