@@ -1,18 +1,87 @@
+//     function updateDateTime() {
+//         // Get current date and time
+//         const now = new Date();
+
+//         // Format the date (e.g., "Feb 01, 2025")
+//         const date = now.toLocaleDateString('en-US', {
+//             weekday: 'long', // e.g., "Monday"
+//             month: 'short',  // e.g., "Feb"
+//             day: 'numeric',  // e.g., "1"
+//             year: 'numeric'  // e.g., "2025"
+//         });
+
+//         // Format the time (e.g., "12:45:30 PM")
+//         const time = now.toLocaleTimeString('en-US', {
+//             hour12: true, // 12-hour format
+//             hour: '2-digit',
+//             minute: '2-digit',
+//             second: '2-digit'
+//         });
+
+//         // Update the datetime element
+//         document.getElementById('datetime').innerHTML = `${date} | ${time}`;
+//     }
+
+//     // Update the date and time every second
+//     setInterval(updateDateTime, 1000);
+
+//     // Call the function initially to show time immediately when the page loads
+//     updateDateTime();
+
+// // Fetch machine data from the backend
+// async function fetchMachineData() {
+//     try {
+//         const response = await fetch('http://localhost:5000/api/machine_data'); // Adjusted URL for API
+//         const data = await response.json();
+//         populateMachineTable(data);
+//     } catch (error) {
+//         console.error('Error fetching machine data:', error);
+//     }
+// }
+
+// // Populate the machine table with data from the backend
+// function populateMachineTable(data) {
+//     const tableBody = document.querySelector('#machineTable tbody');
+//     tableBody.innerHTML = data.map(machine => `
+//         <tr>
+//              <td>${machine.Sensor_No}</td>
+//             <td>${machine.Machine_No}</td>
+//             <td>${machine.Level_MM}</td>
+//              <td>${machine.Metal_Available_KG || 'N/A'}</td>  <!-- Metal Available (KG) -->
+
+//             <td></td>
+//             <td></td>
+//             <td></td>
+//             <td></td>
+//             <td>${machine.W_Condition}</td>
+//             <td>${machine.Status}</td>
+//         </tr>
+//     `).join('');
+// }
+
+// // Fetch machine data when the page loads
+// fetchMachineData();
+
 function updateDateTime() {
     const now = new Date();
+
+    // Format the date (e.g., "Feb 01, 2025")
     const date = now.toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "short",
-        day: "numeric",
-        year: "numeric",
+        weekday: "long", // e.g., "Monday"
+        month: "short", // e.g., "Feb"
+        day: "numeric", // e.g., "1"
+        year: "numeric", // e.g., "2025"
     });
+
+    // Format the time (e.g., "12:45:30 PM")
     const time = now.toLocaleTimeString("en-US", {
-        hour12: true,
+        hour12: true, // 12-hour format
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
     });
 
+    // Update the datetime element
     document.getElementById("datetime").innerHTML = `${date} | ${time}`;
 }
 
@@ -21,16 +90,11 @@ updateDateTime();
 
 async function fetchMachineData() {
     try {
-        const response = await fetch(
-            "https://otif-tool.onrender.com/api/machine_data"
-        );
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        const response = await fetch("http://localhost:5000/api/machine_data"); // Adjusted URL for API
         const data = await response.json();
         populateMachineTable(data);
     } catch (error) {
-        console.error("Error fetching machine data:", error.message);
+        console.error("Error fetching machine data:", error);
     }
 }
 
@@ -43,7 +107,9 @@ function populateMachineTable(data) {
             <td>${machine.Sensor_No}</td>
             <td>${machine.Machine_No}</td>
             <td>${machine.Level_MM}</td>
-            <td>${machine.Metal_Available_KG || "N/A"}</td>
+            <td>${
+                machine.Metal_Available_KG || "N/A"
+            }</td>  <!-- Metal Available (KG) -->
             <td></td>
             <td></td>
             <td></td>
@@ -56,99 +122,93 @@ function populateMachineTable(data) {
         .join("");
 }
 
+// Fetch data for Overall Consumption Rate
 async function fetchOverallConsumptionRate() {
     try {
         const response = await fetch(
-            "https://otif-tool.onrender.com/api/overall_consumption_rate"
-        );
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+            "http://localhost:5000/api/overall_consumption_rate"
+        ); // Adjusted URL for API
         const data = await response.json();
         updateConsumptionRate(data);
     } catch (error) {
-        console.error(
-            "Error fetching overall consumption rate data:",
-            error.message
-        );
+        console.error("Error fetching overall consumption rate data:", error);
     }
 }
 
-function updateConsumptionRate(data) {
-    const consumptionRateElement = document.querySelectorAll(".info-box p")[0];
-    if (data && data.Molten_Target) {
-        consumptionRateElement.innerText = data.Molten_Target;
-    } else {
-        consumptionRateElement.innerText = "No data available";
-    }
-}
+// Update the Overall Consumption Rate box with fetched data
+// function updateConsumptionRate(data) {
+//     const consumptionRateElement = document.querySelectorAll('.info-box p')[0];  // First info-box <p> tag
+//     if (data && data.Molten_Target) {
+//         consumptionRateElement.innerText = data.Molten_Target;  // Set the value inside the <p> tag
+//     } else {
+//         consumptionRateElement.innerText = 'No data available';  // Fallback if no data is found
+//     }
+// }
 
 async function fetchMoltenTarget() {
     try {
-        const response = await fetch(
-            "https://otif-tool.onrender.com/api/molten_target"
-        );
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        const response = await fetch("http://localhost:5000/api/molten_target"); // Adjusted URL for API
         const data = await response.json();
         updateMoltenTarget(data);
     } catch (error) {
-        console.error("Error fetching molten target data:", error.message);
+        console.error("Error fetching molten target data:", error);
     }
 }
 
 function updateMoltenTarget(data) {
-    const moltenTargetElement = document.querySelectorAll(".info-box p")[1];
+    const moltenTargetElement = document.querySelectorAll(".info-box p")[1]; // Second info-box <p> tag
     if (data && data.Molten_Target) {
-        moltenTargetElement.innerText = data.Molten_Target;
+        moltenTargetElement.innerText = data.Molten_Target; // Set the value inside the <p> tag
     } else {
-        moltenTargetElement.innerText = "No data available";
+        moltenTargetElement.innerText = "No data available"; // Fallback if no data is found
     }
 }
 
 async function fetchTotalMachinesRunning() {
     try {
         const response = await fetch(
-            "https://otif-tool.onrender.com/api/total_machines_running"
-        );
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+            "http://localhost:5000/api/total_machines_running"
+        ); // Adjusted URL for API
         const data = await response.json();
         updateTotalMachinesRunning(data);
     } catch (error) {
-        console.error(
-            "Error fetching total machines running data:",
-            error.message
-        );
+        console.error("Error fetching total machines running data:", error);
     }
 }
 
+// Update the Total Machines Running box with fetched data
+// function updateTotalMachinesRunning(data) {
+//     const totalMachinesElement = document.querySelectorAll('.info-box p')[2];  // Third info-box <p> tag
+//     if (data && data.Molten_Target) {
+//         totalMachinesElement.innerText = data.Molten_Target;  // Set the value inside the <p> tag
+//     } else {
+//         totalMachinesElement.innerText = 'No data available';  // Fallback if no data is found
+//     }
+// }
+
+// Fetch data for Overall OTIF %
 async function fetchOtifPercentage() {
     try {
         const response = await fetch(
-            "https://otif-tool.onrender.com/api/otif_percentage"
-        );
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+            "http://localhost:5000/api/otif_percentage"
+        ); // Adjusted URL for API
         const data = await response.json();
         updateOtifPercentage(data);
     } catch (error) {
-        console.error("Error fetching OTIF percentage data:", error.message);
+        console.error("Error fetching OTIF percentage data:", error);
     }
 }
 
 function updateOtifPercentage(data) {
-    const otifElement = document.querySelectorAll(".info-box p")[3];
+    const otifElement = document.querySelectorAll(".info-box p")[3]; // Fourth info-box <p> tag
     if (data && data.Molten_Target) {
-        otifElement.innerText = `${data.Molten_Target}%`;
+        otifElement.innerText = `${data.Molten_Target}%`; // Set the value inside the <p> tag
     } else {
-        otifElement.innerText = "No data available";
+        otifElement.innerText = "No data available"; // Fallback if no data is found
     }
 }
 
+// Fetch machine data when the page loads
 fetchMachineData();
 fetchOverallConsumptionRate();
 fetchMoltenTarget();
