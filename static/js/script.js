@@ -227,7 +227,7 @@ fetchMachineData();
 
 setInterval(fetchMachineData, 60000);
 
-fetchOverallConsumptionRate();
-fetchMoltenTarget();
-fetchTotalMachinesRunning();
-fetchOtifPercentage();
+// fetchOverallConsumptionRate();
+// fetchMoltenTarget();
+// fetchTotalMachinesRunning();
+// fetchOtifPercentage();
