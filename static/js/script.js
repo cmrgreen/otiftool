@@ -225,6 +225,8 @@ function updateOtifPercentage(data) {
 // Fetch machine data when the page loads
 fetchMachineData();
 
+setInterval(fetchMachineData, 60000);
+
 fetchOverallConsumptionRate();
 fetchMoltenTarget();
 fetchTotalMachinesRunning();
