@@ -189,13 +189,13 @@ def fetch_metal_available_data(number):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     query = f"""
-    SELECT 
-        ROUND((mw.Weight_per_mm * s{number}.Level_MM), 2) AS metalavailinkg
+     SELECT
+   ROUND((mw.Weight_per_mm * s{number}_Data.Level_MM), 2) AS metalavailinkg
     FROM Material_Weight_Factor mw
-    LEFT JOIN S{number}_Data s{number} ON s{number}.Machine_No = mw.Machine_No
-    WHERE s{number}.Date = '18-01-2025'
-    ORDER BY s{number}.Time DESC
-    LIMIT 1;
+    LEFT JOIN S{number}_Data S{number}_Data on s{number}_Data.Machine_No = mw.Machine_No
+    WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
+    ORDER BY s{number}_Data.Time DESC
+    LIMIT 1;
     """
     cursor.execute(query)
     metal_data = cursor.fetchone()
