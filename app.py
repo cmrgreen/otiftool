@@ -396,42 +396,96 @@ def fetch_otif_percentage():
     
 
 # Route to fetch machine data
+# @app.route('/api/machine_data', methods=['GET'])
+# def get_machine_data():
+#     machine_data = []
+#     for index in range(1, 9):  
+#         # Fetch sensor data
+#         data = fetch_latest_data_from_table(index)
+        
+#         # Fetch Metal Available data
+#         metal_data = fetch_metal_available_data(index)
+
+#         consumption_data = fetch_consumption_rate_data(index)
+
+#         availability_data = fetch_availability_per_data(index)
+
+#         otif_data = fetch_otif_per_data(index)
+
+#         refilling_data = fetch_RefillingTime_data(index)
+        
+#         if data:
+#             # Combine the sensor data and metal available data
+#             machine_info = {
+#                 'Sensor_No': data['Sensor_No'],
+#                 'Machine_No': data['Machine_No'],
+#                 'Level_MM': data['Level_MM'],
+#                 'W_Condition': data['W_Condition'],
+#                 'Status': data['Status'],
+#                 'Metal_Available_KG': metal_data['metalavailinkg'] if metal_data else None,
+#                 'Consumption_Rate': consumption_data['consumption_rate'] if consumption_data else None,
+#                 'Availability_per': availability_data['availability_per'] if availability_data else None,
+#                 'Otif_per': otif_data['otif'] if otif_data else None,
+#                 'Refilling_Time': refilling_data['Refilling_Time'] if refilling_data else None
+
+
+#             }
+#             machine_data.append(machine_info)
+    
+#     return jsonify(machine_data)
 @app.route('/api/machine_data', methods=['GET'])
 def get_machine_data():
     machine_data = []
-    for index in range(1, 9):  
-        # Fetch sensor data
-        data = fetch_latest_data_from_table(index)
-        
-        # Fetch Metal Available data
-        metal_data = fetch_metal_available_data(index)
-
-        consumption_data = fetch_consumption_rate_data(index)
-
-        availability_data = fetch_availability_per_data(index)
-
-        otif_data = fetch_otif_per_data(index)
-
-        refilling_data = fetch_RefillingTime_data(index)
-        
-        if data:
-            # Combine the sensor data and metal available data
-            machine_info = {
-                'Sensor_No': data['Sensor_No'],
-                'Machine_No': data['Machine_No'],
-                'Level_MM': data['Level_MM'],
-                'W_Condition': data['W_Condition'],
-                'Status': data['Status'],
-                'Metal_Available_KG': metal_data['metalavailinkg'] if metal_data else None,
-                'Consumption_Rate': consumption_data['consumption_rate'] if consumption_data else None,
-                'Availability_per': availability_data['availability_per'] if availability_data else None,
-                'Otif_per': otif_data['otif'] if otif_data else None,
-                'Refilling_Time': refilling_data['Refilling_Time'] if refilling_data else None
-
-
-            }
-            machine_data.append(machine_info)
     
+    for index in range(1, 9):  # Loop through all machines
+        machine_info = {}
+        
+        try:
+            # Fetch the latest data for the machine
+            data = fetch_latest_data_from_table(index)
+            if data:
+                machine_info['Sensor_No'] = data['Sensor_No']
+                machine_info['Machine_No'] = data['Machine_No']
+                machine_info['Level_MM'] = data['Level_MM']
+                machine_info['W_Condition'] = data['W_Condition']
+                machine_info['Status'] = data['Status']
+            else:
+                raise ValueError(f"Data for Sensor {index} not found.")
+            
+            # Fetch Metal Available data
+            metal_data = fetch_metal_available_data(index)
+            if metal_data:
+                machine_info['Metal_Available_KG'] = metal_data['metalavailinkg']
+            
+            # Fetch Consumption Rate data
+            consumption_data = fetch_consumption_rate_data(index)
+            if consumption_data:
+                machine_info['Consumption_Rate'] = consumption_data['consumption_rate']
+            
+            # Fetch Availability Percentage
+            availability_data = fetch_availability_per_data(index)
+            if availability_data:
+                machine_info['Availability_per'] = availability_data['availability_per']
+            
+            # Fetch OTIF Percentage
+            otif_data = fetch_otif_per_data(index)
+            if otif_data:
+                machine_info['Otif_per'] = otif_data['otif']
+            
+            # Fetch Refilling Time
+            refilling_data = fetch_RefillingTime_data(index)
+            if refilling_data:
+                machine_info['Refilling_Time'] = refilling_data['Refilling_Time']
+            
+            # If all data is successfully fetched, append it
+            machine_data.append(machine_info)
+        
+        except Exception as e:
+            # Log or handle any errors gracefully
+            print(f"Error fetching data for machine {index}: {e}")
+            # You can continue fetching data for the next machine even if an error occurred
+            continue  # Proceed to next machine if there was an error
+
     return jsonify(machine_data)
 
 
