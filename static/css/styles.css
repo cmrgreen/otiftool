@@ -1,5 +1,5 @@
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: "Arial", sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f6f9; /* Lighter background color */
@@ -29,8 +29,9 @@ h1 {
     font-weight: bold;
 }
 
-
-.summary, .machine-status, .chat-section {
+.summary,
+.machine-status,
+.chat-section {
     margin-bottom: 20px;
     background: white;
     padding: 20px;
@@ -40,13 +41,13 @@ h1 {
 
 /* Style for <p> tags inside info-boxes */
 .info-box p {
-    font-family: 'Arial', sans-serif;  /* Use a clean, sans-serif font */
-    font-weight: bold;                /* Make the text bold */
-    font-size: 7.5em;                 /* Make the font size large */
-    color: #cf0606;                      /* Set text color (dark gray) */
-    margin: 10px 0;                   /* Add some space above and below the text */
-    text-align: center;               /* Center-align the text */
-    line-height: 1.6;                 /* Adjust line height for readability */
+    font-family: "Arial", sans-serif; /* Use a clean, sans-serif font */
+    font-weight: bold; /* Make the text bold */
+    font-size: 7.5em; /* Make the font size large */
+    color: #cf0606; /* Set text color (dark gray) */
+    margin: 10px 0; /* Add some space above and below the text */
+    text-align: center; /* Center-align the text */
+    line-height: 1.6; /* Adjust line height for readability */
 }
 
 table {
@@ -55,7 +56,8 @@ table {
     margin-top: 20px;
 }
 
-th, td {
+th,
+td {
     padding: 12px;
     text-align: center;
     border: 1px solid #ddd;
@@ -109,7 +111,7 @@ td {
 
 h2.headertekst {
     text-align: center;
-  }
+}
 
 footer {
     text-align: center;
@@ -182,4 +184,19 @@ button:hover {
 
 button:focus {
     outline: none;
+}
+
+.loader {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 5px;
+    z-index: 9999;
 }

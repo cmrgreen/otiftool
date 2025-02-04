@@ -31,7 +31,7 @@
 // // Fetch machine data from the backend
 // async function fetchMachineData() {
 //     try {
-//         const response = await fetch('https://otif-tool.onrender.com/api/machine_data'); // Adjusted URL for API
+//         const response = await fetch('http://localhost:5000/api/machine_data'); // Adjusted URL for API
 //         const data = await response.json();
 //         populateMachineTable(data);
 //     } catch (error) {
@@ -62,6 +62,7 @@
 // // Fetch machine data when the page loads
 // fetchMachineData();
 
+//correct just take time in in itial calling of machine data function
 function updateDateTime() {
     // Get current date and time
     const now = new Date();
@@ -118,10 +119,10 @@ function populateMachineTable(data) {
             <td>${
                 machine.Metal_Available_KG || "N/A"
             }</td>  <!-- Metal Available (KG) -->
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>${machine.Consumption_Rate || "N/A"}</td>
+            <td>${machine.Refilling_Time}</td>
+            <td>${machine.Otif_per}</td>
+            <td>${machine.Availability_per || "N/A"}</td>
             <td>${machine.W_Condition}</td>
             <td>${machine.Status}</td>
         </tr>
@@ -222,10 +223,13 @@ function updateOtifPercentage(data) {
     }
 }
 
-// Fetch machine data when the page loads
+// Call fetchMachineData initially to load data when the page loads
 fetchMachineData();
 
-fetchOverallConsumptionRate();
-fetchMoltenTarget();
-fetchTotalMachinesRunning();
-fetchOtifPercentage();
+// Update fetchMachineData every 1 minute (60,000 milliseconds)
+setInterval(fetchMachineData, 60000);
+
+// fetchOverallConsumptionRate();
+// fetchMoltenTarget();
+// fetchTotalMachinesRunning();
+// fetchOtifPercentage();

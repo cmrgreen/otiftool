@@ -190,18 +190,136 @@ def fetch_metal_available_data(number):
     cursor = conn.cursor(dictionary=True)
     query = f"""
     SELECT 
-        ROUND((mw.Weight_per_mm * s{number}.Level_MM), 2) AS metalavailinkg
+        ROUND((mw.Weight_per_mm * s{number}_Data.Level_MM), 2) AS metalavailinkg
     FROM Material_Weight_Factor mw
-    LEFT JOIN S{number}_Data s{number} ON s{number}.Machine_No = mw.Machine_No
-    WHERE s{number}.Date = '18-01-2025'
-    ORDER BY s{number}.Time DESC
+    LEFT JOIN S{number}_Data S{number}_Data on s{number}_Data.Machine_No = mw.Machine_No
+    WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
+    ORDER BY s{number}_Data.Time DESC
     LIMIT 1;
     """
+
     cursor.execute(query)
     metal_data = cursor.fetchone()
     cursor.close()
     conn.close()
     return metal_data
+
+#03.02.2025 --15:04 PM
+    # Function to fetch consumption rate from Material_Weight_Factor
+def fetch_consumption_rate_data(number):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = f"""
+   SELECT 
+    ROUND(
+        (
+            (SELECT SUM(change_level) * 2
+             FROM (
+                 SELECT change_level
+                 FROM cmr_db.S{number}_Data 
+                   WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
+                 ORDER BY time DESC
+                 LIMIT 30
+             ) tmp
+            ) ) * 
+            (
+                SELECT weight_per_mm
+                FROM Material_Weight_Factor
+                WHERE Sensor_No = {number}
+                LIMIT 1
+            ), 2
+    ) AS consumption_rate;
+    """
+
+    cursor.execute(query)
+    consumption_data = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return consumption_data
+
+##-------------
+
+
+##Query for Availability% --03-02-2025
+def fetch_availability_per_data(number):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = f"""
+SELECT 
+  (SELECT Level_MM FROM S{number}_Data LIMIT 1) / 
+  (SELECT Furnace_Depth FROM Material_Weight_Factor WHERE Sensor_No = {number} LIMIT 1) AS availability_per;
+
+    """
+
+    cursor.execute(query)
+    availability_data = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return availability_data
+
+
+##Query for Otif% --04-02-2025
+def fetch_otif_per_data(number):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = f"""
+SELECT COUNT(*) AS otif
+FROM (
+    SELECT * 
+    FROM S{number}_Data 
+    ORDER BY time DESC
+    LIMIT 480
+) AS tmp
+WHERE Level_MM < (
+    SELECT Low_Level 
+    FROM Level_Limit 
+    WHERE Sensor_No = {number}
+)
+AND W_Condition = 'Stopped';
+
+    """
+
+    cursor.execute(query)
+    otif_data = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return otif_data
+
+##Query for Refilling Time --04-02-2025
+def fetch_RefillingTime_data(number):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = f"""
+  SELECT 
+    ROUND(
+        (
+            (SELECT SUM(change_level) * 3
+             FROM (
+                 SELECT change_level
+                 FROM cmr_db.S{number}_Data 
+                   WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
+                 ORDER BY time DESC
+                 LIMIT 100
+             ) tmp
+            ) ) * 
+            (
+                SELECT weight_per_mm
+                FROM Material_Weight_Factor
+                WHERE Sensor_No = {number}
+                LIMIT 1
+            ), 2
+    ) AS Refilling_Time;
+
+
+    """
+
+    cursor.execute(query)
+    refilling_data = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return refilling_data
+
+
 
 
 # Function to fetch data for Overall Consumption Rate
@@ -275,6 +393,8 @@ def fetch_otif_percentage():
     conn.close()
     return otif_data
 
+    
+
 # Route to fetch machine data
 @app.route('/api/machine_data', methods=['GET'])
 def get_machine_data():
@@ -285,6 +405,14 @@ def get_machine_data():
         
         # Fetch Metal Available data
         metal_data = fetch_metal_available_data(index)
+
+        consumption_data = fetch_consumption_rate_data(index)
+
+        availability_data = fetch_availability_per_data(index)
+
+        otif_data = fetch_otif_per_data(index)
+
+        refilling_data = fetch_RefillingTime_data(index)
         
         if data:
             # Combine the sensor data and metal available data
@@ -294,7 +422,13 @@ def get_machine_data():
                 'Level_MM': data['Level_MM'],
                 'W_Condition': data['W_Condition'],
                 'Status': data['Status'],
-                'Metal_Available_KG': metal_data['metalavailinkg'] if metal_data else None
+                'Metal_Available_KG': metal_data['metalavailinkg'] if metal_data else None,
+                'Consumption_Rate': consumption_data['consumption_rate'] if consumption_data else None,
+                'Availability_per': availability_data['availability_per'] if availability_data else None,
+                'Otif_per': otif_data['otif'] if otif_data else None,
+                'Refilling_Time': refilling_data['Refilling_Time'] if refilling_data else None
+
+
             }
             machine_data.append(machine_info)
     
