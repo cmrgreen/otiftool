@@ -37,6 +37,58 @@ def get_db_connection_with_retry():
                 raise Exception("Max retries reached. Could not connect to the database.")
     return None  # If all retries fail
 
+# Function to fetch Overall OTIF % (to be updated)
+def fetch_otif_percentage():
+    # Add your query logic for Overall OTIF % here
+    conn = get_db_connection_with_retry()
+    cursor = conn.cursor(dictionary=True)
+    query = """
+    SELECT Molten_Target 
+    FROM Plant_Target 
+    WHERE Date = '19 October 2023 12:38:41' 
+    ORDER BY Date DESC 
+    LIMIT 1;
+    """
+    cursor.execute(query)
+    otif_data = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return otif_data
+
+def fetch_total_machines_running():
+    # Add your query logic for Total Machines Running here
+    conn = get_db_connection_with_retry()
+    cursor = conn.cursor(dictionary=True)
+    query = """
+    SELECT Molten_Target 
+    FROM Plant_Target 
+    WHERE Date = '19 October 2023 12:38:41' 
+    ORDER BY Date DESC 
+    LIMIT 1;
+    """
+    cursor.execute(query)
+    total_machines_data = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return total_machines_data
+
+# Function to fetch Molten Metal Target (Plant)
+def fetch_molten_target():
+    conn = get_db_connection_with_retry()
+    cursor = conn.cursor(dictionary=True)
+    query = """
+    SELECT Molten_Target 
+    FROM Plant_Target 
+    WHERE Date = '19 October 2023 12:38:41' 
+    ORDER BY Date DESC 
+    LIMIT 1;
+    """
+    cursor.execute(query)
+    molten_target_data = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return molten_target_data
+
 
 # Function to fetch latest data from a specific table
 def fetch_latest_data_from_table(number):
