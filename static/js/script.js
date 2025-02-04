@@ -226,6 +226,8 @@ function updateOtifPercentage(data) {
 // Call fetchMachineData initially to load data when the page loads
 fetchMachineData();
 
+setInterval(fetchMachineData, 60000);
+
 // Update fetchMachineData every 1 minute (60,000 milliseconds)
 setInterval(fetchMachineData, 60000);
 
