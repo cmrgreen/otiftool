@@ -96,7 +96,9 @@ updateDateTime();
 // Fetch machine data from the backend
 async function fetchMachineData() {
     try {
-        const response = await fetch("http://localhost:5000/api/machine_data"); // Adjusted URL for API
+        const response = await fetch(
+            "https://otif-tool.onrender.com/api/machine_data"
+        ); // Adjusted URL for API
         const data = await response.json();
         populateMachineTable(data);
     } catch (error) {
@@ -133,7 +135,7 @@ function populateMachineTable(data) {
 async function fetchOverallConsumptionRate() {
     try {
         const response = await fetch(
-            "http://localhost:5000/api/overall_consumption_rate"
+            "https://otif-tool.onrender.com/api/overall_consumption_rate"
         ); // Adjusted URL for API
         const data = await response.json();
         updateConsumptionRate(data); // Update the UI with the fetched data
@@ -155,7 +157,9 @@ function updateConsumptionRate(data) {
 // Fetch data for Molten Metal Target (Plant)
 async function fetchMoltenTarget() {
     try {
-        const response = await fetch("http://localhost:5000/api/molten_target"); // Adjusted URL for API
+        const response = await fetch(
+            "https://otif-tool.onrender.com/api/molten_target"
+        ); // Adjusted URL for API
         const data = await response.json();
         updateMoltenTarget(data); // Update the UI with the fetched data
     } catch (error) {
@@ -177,7 +181,7 @@ function updateMoltenTarget(data) {
 async function fetchTotalMachinesRunning() {
     try {
         const response = await fetch(
-            "http://localhost:5000/api/total_machines_running"
+            "https://otif-tool.onrender.com/api/total_machines_running"
         ); // Adjusted URL for API
         const data = await response.json();
         updateTotalMachinesRunning(data); // Update the UI with the fetched data
@@ -200,7 +204,7 @@ function updateTotalMachinesRunning(data) {
 async function fetchOtifPercentage() {
     try {
         const response = await fetch(
-            "http://localhost:5000/api/otif_percentage"
+            "https://otif-tool.onrender.com/api/otif_percentage"
         ); // Adjusted URL for API
         const data = await response.json();
         updateOtifPercentage(data); // Update the UI with the fetched data
