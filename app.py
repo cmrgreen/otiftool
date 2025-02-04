@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import mysql.connector
 import time
-import threading
 from mysql.connector import Error
 from threading import Thread
 
@@ -36,7 +35,6 @@ def get_db_connection_with_retry():
                 time.sleep(RETRY_DELAY)  # Wait before retrying
             else:
                 raise Exception("Max retries reached. Could not connect to the database.")
-
     return None  # If all retries fail
 
 
@@ -171,6 +169,8 @@ def fetch_RefillingTime_data(number):
     cursor.close()
     conn.close()
     return refilling_data
+
+# Function to fetch machine data concurrently
 def fetch_machine_data(index, result_list):
     result_list[index] = {
         'data': fetch_latest_data_from_table(index),
@@ -187,17 +187,17 @@ def get_machine_data():
     threads = []
     results = {}
 
+    # Fetch data for all machines concurrently using threads
     for index in range(1, 9):
-        # Create and start a new thread for each machine's data fetching
         thread = Thread(target=fetch_machine_data, args=(index, results))
         threads.append(thread)
         thread.start()
-    
+
     # Wait for all threads to finish
     for thread in threads:
         thread.join()
 
-    # Now collect results
+    # Collect results after all threads have finished
     for index in range(1, 9):
         machine_data.append({
             'index': index,
