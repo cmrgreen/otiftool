@@ -4,6 +4,7 @@ import mysql.connector
 import time
 import threading
 from mysql.connector import Error
+from threading import Thread
 
 app = Flask(__name__)
 CORS(app)
@@ -170,35 +171,44 @@ def fetch_RefillingTime_data(number):
     cursor.close()
     conn.close()
     return refilling_data
+def fetch_machine_data(index, result_list):
+    result_list[index] = {
+        'data': fetch_latest_data_from_table(index),
+        'metal_data': fetch_metal_available_data(index),
+        'consumption_data': fetch_consumption_rate_data(index),
+        'availability_data': fetch_availability_per_data(index),
+        'otif_data': fetch_otif_per_data(index),
+        'refilling_data': fetch_RefillingTime_data(index),
+    }
 
-# Route to fetch machine data
 @app.route('/api/machine_data', methods=['GET'])
 def get_machine_data():
     machine_data = []
-    for index in range(1, 9):  # Looping through machine numbers 1 to 8
-        # Fetch all machine-related data
-        data = fetch_latest_data_from_table(index)
-        metal_data = fetch_metal_available_data(index)
-        consumption_data = fetch_consumption_rate_data(index)
-        availability_data = fetch_availability_per_data(index)
-        otif_data = fetch_otif_per_data(index)
-        refilling_data = fetch_RefillingTime_data(index)
-        
-        if data:
-            machine_info = {
-                'Sensor_No': data['Sensor_No'],
-                'Machine_No': data['Machine_No'],
-                'Level_MM': data['Level_MM'],
-                'W_Condition': data['W_Condition'],
-                'Status': data['Status'],
-                'Metal_Available_KG': metal_data['metalavailinkg'] if metal_data else None,
-                'Consumption_Rate': consumption_data['consumption_rate'] if consumption_data else None,
-                'Availability_per': availability_data['availability_per'] if availability_data else None,
-                'Otif_per': otif_data['otif'] if otif_data else None,
-                'Refilling_Time': refilling_data['Refilling_Time'] if refilling_data else None
-            }
-            machine_data.append(machine_info)
+    threads = []
+    results = {}
+
+    for index in range(1, 9):
+        # Create and start a new thread for each machine's data fetching
+        thread = Thread(target=fetch_machine_data, args=(index, results))
+        threads.append(thread)
+        thread.start()
     
+    # Wait for all threads to finish
+    for thread in threads:
+        thread.join()
+
+    # Now collect results
+    for index in range(1, 9):
+        machine_data.append({
+            'index': index,
+            'data': results[index]['data'],
+            'metal_data': results[index]['metal_data'],
+            'consumption_data': results[index]['consumption_data'],
+            'availability_data': results[index]['availability_data'],
+            'otif_data': results[index]['otif_data'],
+            'refilling_data': results[index]['refilling_data']
+        })
+
     return jsonify(machine_data)
 
 # Route to fetch overall consumption rate
