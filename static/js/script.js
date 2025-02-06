@@ -29,19 +29,6 @@ setInterval(updateDateTime, 1000);
 // Call the function initially to show time immediately when the page loads
 updateDateTime();
 
-// Fetch machine data from the backend
-async function fetchMachineData() {
-    try {
-        const response = await fetch(
-            "https://otif-tool.onrender.com/api/machine_data"
-        ); // Adjusted URL for API
-        const data = await response.json();
-        populateMachineTable(data);
-    } catch (error) {
-        console.error("Error fetching machine data:", error);
-    }
-}
-
 // Populate the machine table with data from the backend
 function populateMachineTable(data) {
     const tableBody = document.querySelector("#machineTable tbody");
@@ -67,19 +54,6 @@ function populateMachineTable(data) {
         .join("");
 }
 
-// Fetch data for Overall Consumption Rate
-async function fetchOverallConsumptionRate() {
-    try {
-        const response = await fetch(
-            "https://otif-tool.onrender.com/api/overall_consumption_rate"
-        ); // Adjusted URL for API
-        const data = await response.json();
-        updateConsumptionRate(data); // Update the UI with the fetched data
-    } catch (error) {
-        console.error("Error fetching overall consumption rate data:", error);
-    }
-}
-
 // Update the Overall Consumption Rate box with fetched data
 function updateConsumptionRate(data) {
     const consumptionRateElement = document.querySelectorAll(".info-box p")[0]; // First info-box <p> tag
@@ -87,42 +61,6 @@ function updateConsumptionRate(data) {
         consumptionRateElement.innerText = `${data.consumption_rate} KG/HRS`; // Set the value inside the <p> tag
     } else {
         consumptionRateElement.innerText = "No data available"; // Fallback if no data is found
-    }
-}
-
-// Fetch data for Molten Metal Target (Plant)
-async function fetchMoltenTarget() {
-    try {
-        const response = await fetch(
-            "https://otif-tool.onrender.com/api/molten_target"
-        ); // Adjusted URL for API
-        const data = await response.json();
-        updateMoltenTarget(data); // Update the UI with the fetched data
-    } catch (error) {
-        console.error("Error fetching molten target data:", error);
-    }
-}
-
-// Update the Molten Metal Target box with fetched data
-function updateMoltenTarget(data) {
-    const moltenTargetElement = document.querySelectorAll(".info-box p")[1]; // Second info-box <p> tag
-    if (data && data.Molten_Target) {
-        moltenTargetElement.innerText = data.Molten_Target; // Set the value inside the <p> tag
-    } else {
-        moltenTargetElement.innerText = "No data available"; // Fallback if no data is found
-    }
-}
-
-// Fetch data for Total Machines Running
-async function fetchTotalMachinesRunning() {
-    try {
-        const response = await fetch(
-            "https://otif-tool.onrender.com/api/total_machines_running"
-        ); // Adjusted URL for API
-        const data = await response.json();
-        updateTotalMachinesRunning(data); // Update the UI with the fetched data
-    } catch (error) {
-        console.error("Error fetching total machines running data:", error);
     }
 }
 
@@ -136,19 +74,6 @@ function updateTotalMachinesRunning(data) {
     }
 }
 
-// Fetch data for Overall OTIF %
-async function fetchOtifPercentage() {
-    try {
-        const response = await fetch(
-            "https://otif-tool.onrender.com/api/otif_percentage"
-        ); // Adjusted URL for API
-        const data = await response.json();
-        updateOtifPercentage(data); // Update the UI with the fetched data
-    } catch (error) {
-        console.error("Error fetching OTIF percentage data:", error);
-    }
-}
-
 // Update the Overall OTIF % box with fetched data
 function updateOtifPercentage(data) {
     const otifElement = document.querySelectorAll(".info-box p")[2]; // Fourth info-box <p> tag
@@ -159,13 +84,20 @@ function updateOtifPercentage(data) {
     }
 }
 
-// Call fetchMachineData initially to load data when the page loads
-fetchMachineData();
+async function fetchData() {
+    try {
+        const response = await fetch(
+            "https://otif-tool.onrender.com/api/fetch_data"
+        ); // Adjusted URL for API
+        const data = await response.json();
+        updateConsumptionRate(data["consumption_rate_data"]);
+        updateTotalMachinesRunning(data["total_machines_data"]);
+        updateOtifPercentage(data["otif_data_round"]);
+        populateMachineTable(data["machine_data"]);
+    } catch (error) {
+        console.error("Error fetching machine data:", error);
+    }
+}
 
-// Update fetchMachineData every 1 minute (60,000 milliseconds)
-setInterval(fetchMachineData, 60000);
-
-fetchOverallConsumptionRate();
-// fetchMoltenTarget();
-fetchTotalMachinesRunning();
-fetchOtifPercentage();
+fetchData();
+setInterval(fetchData, 60000);
