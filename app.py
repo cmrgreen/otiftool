@@ -55,7 +55,7 @@ def fetch_data():
     for number in range(1, 9): 
 
         cursor = conn.cursor(dictionary=True)
-        query1=f"SELECT * FROM S{number}_Data WHERE STR_TO_DATE(Date, '%d-%m-%Y') = CURDATE() -1 ORDER BY time DESC LIMIT 1;"
+        query1=f"SELECT * FROM S{number}_Data WHERE STR_TO_DATE(Date, '%d-%m-%Y') = CURDATE() ORDER BY time DESC LIMIT 1;"
         cursor.execute(query1)
         data = cursor.fetchone()
         cursor.close()
@@ -65,7 +65,7 @@ def fetch_data():
         query2= f""" SELECT ROUND((mw.Weight_per_mm * s{number}_Data.Level_MM), 2) AS metalavailinkg
 					FROM Material_Weight_Factor mw
 					LEFT JOIN S{number}_Data S{number}_Data on s{number}_Data.Machine_No = mw.Machine_No
-					WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE() -1
+					WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
 					ORDER BY s{number}_Data.Time DESC LIMIT 1; 
                 """
         cursor.execute(query2)
@@ -76,7 +76,7 @@ def fetch_data():
         query3= f""" SELECT ROUND ( ( ( SELECT SUM(change_level) * 2 FROM 
 						( 	SELECT change_level 
 							FROM cmr_db.S{number}_Data 
-							WHERE change_level > 0 and STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE() -1
+							WHERE change_level > 0 and STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
 							ORDER BY time DESC
 							LIMIT 30 ) tmp ) 
 						) * (
@@ -96,7 +96,7 @@ def fetch_data():
 						SELECT ROUND((mw.Weight_per_mm * s{number}_Data.Level_MM), 2) AS metalavailinkg
 						FROM Material_Weight_Factor mw
 						LEFT JOIN S{number}_Data S{number}_Data on s{number}_Data.Machine_No = mw.Machine_No
-						WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE() -1
+						WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
 						ORDER BY s{number}_Data.Time DESC LIMIT 1
                     ) / (
 						SELECT Furnace_Depth*Weight_per_mm FROM Material_Weight_Factor WHERE Sensor_No = {number} LIMIT 1
