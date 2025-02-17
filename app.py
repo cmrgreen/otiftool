@@ -112,7 +112,7 @@ def fetch_data():
 					(
 						SELECT * 
 						FROM S{number}_Data 
-						ORDER BY time DESC LIMIT 480
+						ORDER BY S_no DESC LIMIT 480
 					) AS tmp WHERE Level_MM < 
 						(
 							SELECT Low_Level 
