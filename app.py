@@ -77,7 +77,7 @@ def fetch_data():
 						( 	SELECT change_level 
 							FROM cmr_db.S{number}_Data 
 							WHERE change_level > 0 and STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
-							ORDER BY time DESC
+							ORDER BY S_no DESC
 							LIMIT 30 ) tmp ) 
 						) * (
 							SELECT weight_per_mm
@@ -138,7 +138,7 @@ def fetch_data():
 								SELECT `Change_Level`
 								FROM `S{number}_Data`
 								WHERE `Change_Level` > 0
-								ORDER BY `time` DESC
+								ORDER BY `S_no` DESC
 								LIMIT 30
 							) tmp
 					) ) * (
