@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMR Material Supply MIS Report</title>
+    <link rel="stylesheet" href="static/css/styles1.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Display the current date and time
+            function updateCurrentTime() {
+                const date = new Date();
+                const formattedDate = date.toLocaleString();
+                document.getElementById('current-time').innerText = formattedDate;
+            }
+    
+            setInterval(updateCurrentTime, 1000); // Update every second
+    
+            // Handle form submission and fetch data
+            document.getElementById('date-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const fromDate = document.getElementById('from-date').value;
+                const toDate = document.getElementById('to-date').value;
+    
+                // Format the dates to match Flask's expected format (e.g., 'yyyy-MM-ddTHH:mm')
+                const formattedFromDate = formatDateForServer(fromDate);
+                const formattedToDate = formatDateForServer(toDate);
+    
+                // Send data to Flask server and update the table and boxes
+                $.ajax({
+                    url: '/get_report',
+                    method: 'POST',
+                    data: {
+                        from_date: formattedFromDate,
+                        to_date: formattedToDate
+                    },
+                    success: function(response) {
+                        // Update the report table
+                        const tbody = document.querySelector('#report-table tbody');
+                        tbody.innerHTML = '';  // Clear the table body
+    
+                        // Loop through all data and display each machine's data
+                        response.data.forEach(machine => {
+                            const tr = document.createElement('tr');
+                            
+                            const tdSensorNumber = document.createElement('td');
+                            tdSensorNumber.innerText = machine.sensor_number;
+                            tr.appendChild(tdSensorNumber);
+    
+                            const tdMachineNumber = document.createElement('td');
+                            tdMachineNumber.innerText = machine.machine_number;
+                            tr.appendChild(tdMachineNumber);
+    
+                            const tdDowntime = document.createElement('td');
+                            tdDowntime.innerText = machine.downtime_minutes;
+                            tr.appendChild(tdDowntime);
+    
+                            const tdDowntimeNoMetal = document.createElement('td');
+                            tdDowntimeNoMetal.innerText = machine.downtime_no_metal_minutes;
+                            tr.appendChild(tdDowntimeNoMetal);
+    
+                            const tdConsumptionRate = document.createElement('td');
+                            tdConsumptionRate.innerText = machine.consumption_rate;
+                            tr.appendChild(tdConsumptionRate);
+    
+                            const tdOTIF = document.createElement('td');
+                            tdOTIF.innerText = machine.otif;
+                            tr.appendChild(tdOTIF);
+    
+                            tbody.appendChild(tr);
+                        });
+    
+                        // Update the summary boxes
+                        //document.getElementById('total-running-time').innerText = response.summary.total_running_time || 'N/A';
+                        document.getElementById('overall-downtime').innerText = response.summary.overall_downtime || 'N/A';
+                        document.getElementById('metal-consumed').innerText = response.summary.metal_consumed || 'N/A';
+                        document.getElementById('otif').innerText = response.summary.otif || 'N/A';
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching report data:", error);
+                    }
+                });
+            });
+    
+            // Helper function to format the date as 'yyyy-MM-ddTHH:mm' (for sending to Flask server)
+            function formatDateForServer(date) {
+                const d = new Date(date);
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');  // Get month and pad with 0 if needed
+                const day = String(d.getDate()).padStart(2, '0');  // Get day and pad with 0 if needed
+                const hours = String(d.getHours()).padStart(2, '0');  // Get hours and pad with 0 if needed
+                const minutes = String(d.getMinutes()).padStart(2, '0');  // Get minutes and pad with 0 if needed
+    
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+        });
+    </script>
+    
+    
+    
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <img src="static/css/Rockman-Industries-Logo.88475a3a.jpg" alt="Logo" class="logo">
+            <h1>CMR Material Supply MIS Report</h1>
+            <div id="current-time"></div>
+        </div>
+    </header>
+
+    <div class="form-container">
+        <form id="date-form">
+            <label for="from-date">From:</label>
+            <input type="datetime-local" id="from-date" name="from-date" required>
+            
+            <label for="to-date">To:</label>
+            <input type="datetime-local" id="to-date" name="to-date" required>
+            
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <!-- Boxes displaying summary information -->
+    <div class="summary-boxes">
+        <!-- <div class="box" >
+            <h3>Total Metal Consumed (KG) </h3>
+            <p id="total-running-time">Loading...</p>
+        </div> -->
+
+        <div class="box" >
+            <h3>Total Downtime(in Mins)</h3>
+            <p id="overall-downtime">Loading...</p>
+        </div>
+        <div class="box" >
+            <h3>Total Downtime Due to No Metal(in Mins)</h3>
+            <p id="metal-consumed">Loading...</p>
+        </div>
+
+        <div class="box" >
+            <h3>OTIF %</h3>
+            <p id="otif">Loading...</p>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table id="report-table">
+            <thead>
+                <tr>
+                    <th>Sensor Number</th>
+                    <th>Machine Number</th>
+                    <th>Downtime (Mins)</th>
+                    <th>Downtime Due to No Metal(Mins)</th>
+                    <th>Consumption Rate (Kg/HRS)</th>
+                    <th>OTIF (%)</th>
+             
+                   
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be dynamically filled here -->
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
