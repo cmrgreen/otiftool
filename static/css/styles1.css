@@ -1,0 +1,130 @@
+/* style.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Apply blur effect to the entire page */
+body.blur-background {
+    filter: blur(1.5px); /* Adjust the blur level as needed */
+    transition: filter 0.3s ease; /* Smooth transition for the blur effect */
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f4f4f4;
+}
+
+.header-container {
+    display: flex; /* Aligns children in a single line */
+    align-items: center; /* Vertically center items */
+}
+
+header img.logo {
+    height: 50px;
+    width: auto;
+    margin-right: 200px;
+}
+
+header h1 {
+    font-size: 24px;
+   
+    margin: 0 200px;
+    font-weight: bold; /* Makes the text bold */
+    color: #333333; /* Dark color */
+}
+
+#current-time {
+    font-size: 16px;
+    font-weight: bold; /* Makes the time bold as well */
+    color: #1f0404; /* Dark color */
+
+}
+/* Loader styles */
+#loader {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3; /* Light gray background */
+    border-top: 5px solid #007bff; /* Blue color for the spinning part */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 9999;  /* Ensure the loader is on top of other elements */
+}
+
+/* Animation to create the spinning effect */
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.form-container {
+    margin: 20px;
+}
+
+.form-container label {
+    margin-right: 10px;
+}
+
+#report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#report-table th, #report-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#report-table th {
+    background-color: #f2f2f2;
+}
+
+button {
+    padding: 10px 15px;
+    margin-top: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.summary-boxes {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px;
+}
+
+.box {
+    width: 18%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #f9f9f9;
+   
+}
+
+.box h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.box p {
+    font-size: 16px;
+    color: #555;
+}
