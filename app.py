@@ -200,7 +200,7 @@ def login():
             if user['livedash']:
                 return redirect(url_for('index'))  # Redirect to index if livedash is True
             elif user['misdash']:
-                return redirect(url_for('https://mis-d5tg.onrender.com/'))  # Redirect to mis if misdash is True
+                return redirect(url_for('mis'))  # Redirect to mis if misdash is True
             else:
                 return 'No valid permissions for this user.'  # Handle no permissions case
         else:
@@ -218,6 +218,10 @@ def home():
 @app.route('/index')
 def index():
     return render_template('index.html')  # Render the index page after successful login
+
+@app.route('/mis')
+def mis():
+    return render_template('mis.html')  # Serve the mis.html page
 
 
 # Route to render index.html
