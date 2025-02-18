@@ -178,10 +178,52 @@ def fetch_data():
     return jsonify(data_list)
 
 
-# Route to render index.html
+# Route to render the login page
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # Get the form data
+        username = request.form['username']
+        password = request.form['password']
+
+        # Establish a connection to the database
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+        
+        # Query the users table to get the user record by username
+        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        user = cursor.fetchone()
+        
+        # If a user record is found and password matches
+        if user and user['password'] == password:
+            # Check the conditions for redirection based on the fields
+            if user['livedash']:
+                return redirect(url_for('index'))  # Redirect to index if livedash is True
+            elif user['misdash']:
+                return redirect(url_for('https://mis-d5tg.onrender.com/'))  # Redirect to mis if misdash is True
+            else:
+                return 'No valid permissions for this user.'  # Handle no permissions case
+        else:
+            return 'Invalid credentials. Please try again.'  # Handle invalid credentials
+
+    # Render the login page
+    return render_template('login.html')
+	
+# Redirect root to the login page
 @app.route('/')
+def home():
+    return redirect(url_for('login'))  # Redirect the root URL to /login
+
+# Route to render index.html
+@app.route('/index')
 def index():
-    return render_template('index.html')
+    return render_template('index.html')  # Render the index page after successful login
+
+
+# Route to render index.html
+# @app.route('/')
+# def index():
+#     return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
