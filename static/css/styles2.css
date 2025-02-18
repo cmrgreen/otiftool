@@ -1,0 +1,210 @@
+/* General Body and Layout Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-image: url('https://cmr.co.in/wp-content/uploads/2020/01/Slider02.jpg'); /* Background Image */
+    background-size: cover;
+    background-position: center center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    flex-direction: column;
+    color: white; /* Default text color */
+}
+
+/* Logo Styling - Circular */
+.logo {
+    width: 120px; /* Adjust the width to fit the design */
+    height: auto; /* Keep the aspect ratio of the logo */
+    margin-bottom: 20px; /* Space between logo and welcome message */
+    border-radius: 6%;
+}
+
+/* Welcome Message Styling */
+.welcome-message {
+    background-color: rgba(67, 184, 238, 0.8); /* Slight transparency for overlay effect */
+    color: white;
+    padding: 20px;
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px; /* Adds space below the welcome message */
+    border-radius: 8px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Shadow for text for better visibility */
+}
+
+/* Styling for the Login Container */
+form {
+    background-color: rgba(255, 255, 255, 0.9); /* White background with slight opacity */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    box-sizing: border-box;
+    margin-top: 10px;
+    text-align: left;
+}
+
+/* Header Style (Login Heading) */
+h2 {
+    font-size: 26px;
+    margin-bottom: 15px;
+    color: white;
+    text-align: center;
+    font-weight: 600;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Label and Input Styling */
+label {
+    display: block;
+    margin: 2px 0 1px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Styling for the Input Fields */
+input[type="text"], input[type="password"] {
+    width: 90%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+}
+
+/* Input Focus Effect */
+input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #4a43ee;
+    outline: none;
+}
+
+/* Button Styling */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4a43ee;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Button Hover Effect */
+button:hover {
+    background-color: #3c38c9; /* Darker shade on hover */
+}
+
+/* Link Styling */
+p a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+p a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Error Message Styling */
+.error-message {
+    color: red;
+    font-size: 16px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+    animation: fadeIn 2s ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    /* For tablets or smaller laptops */
+    .welcome-message {
+        font-size: 24px;
+        padding: 15px;
+    }
+
+    form {
+        width: 80%;
+        padding: 25px;
+    }
+
+    h2 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* For tablets (portrait mode) */
+    .welcome-message {
+        font-size: 22px;
+        padding: 15px;
+    }
+
+    form {
+        width: 90%;
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+
+    input[type="text"], input[type="password"] {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 500px) {
+    /* For small mobile screens */
+    .welcome-message {
+        font-size: 20px;
+        padding: 10px;
+    }
+
+    form {
+        width: 95%;
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    input[type="text"], input[type="password"] {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
+/* Animation for Error Message */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
