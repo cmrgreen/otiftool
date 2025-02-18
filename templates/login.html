@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login-OTIF</title>
+    <link rel="icon" type="image/x-icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI3j5SmxBFc-8uem8VkKEUDfQC5UJQeMup4Q&s">
+    <!-- <link rel="stylesheet" href="static/css/styles2.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles2.css') }}">
+</head>
+<body>
+
+    <!-- Logo Image -->
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI3j5SmxBFc-8uem8VkKEUDfQC5UJQeMup4Q&s" alt="Logo" class="logo">
+    <!-- <img src="\logo.png" alt="Logo" class="logo"> -->
+
+
+    <!-- Welcome Message -->
+    <div class="welcome-message">
+        <h1>Welcome to OTIF CMR+Rockman: On Time In Full</h1>
+    </div>
+
+    <h2>Login</h2>
+
+    <!-- Display Error Message if Login Fails -->
+    {% if error_message %}
+        <div class="error-message">{{ error_message }}</div>
+    {% endif %}
+
+    <!-- Login Form -->
+    <form action="/login" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+
+        <button type="submit">Login</button>
+
+        <!-- Link to Register Page -->
+<p style="color: rgb(199, 23, 47)">Don't have an account? <a href="/register">Register here</a></p>
+
+<!-- <p style="color: rgb(199, 23, 47); text-align: center;">Want to Change Passward? <a href="/changepassward"><br>Change Passward</a></p> -->
+
+    </form>
+
+</body>
+</html>
