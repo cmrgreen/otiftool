@@ -78,9 +78,9 @@ def fetch_data():
         query3= f""" SELECT ROUND ( ( ( SELECT SUM(change_level) * 2 FROM 
 						( 	SELECT change_level 
 							FROM cmr_db.S{number}_Data 
-							WHERE change_level > 0 and STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
+							WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
 							ORDER BY S_no DESC
-							LIMIT 30 ) tmp ) 
+							LIMIT 30 ) tmp where change_level>0 ) 
 						) * (
 							SELECT weight_per_mm
 							FROM Material_Weight_Factor
@@ -139,10 +139,10 @@ def fetch_data():
 							(
 								SELECT `Change_Level`
 								FROM `S{number}_Data`
-								WHERE `Change_Level` > 0
+								WHERE 1=1
 								ORDER BY `S_no` DESC
 								LIMIT 30
-							) tmp
+							) tmp where change_level>0
 					) ) * (
 							SELECT weight_per_mm
 							FROM Material_Weight_Factor
