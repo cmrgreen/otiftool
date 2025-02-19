@@ -70,7 +70,7 @@ function updateTotalMachinesRunning(data) {
     if (data && data.cntrun) {
         totalMachinesElement.innerText = data.cntrun; // Set the value inside the <p> tag
     } else {
-        totalMachinesElement.innerText = "No data available"; // Fallback if no data is found
+        totalMachinesElement.innerText = "0"; // Fallback if no data is found
     }
 }
 
