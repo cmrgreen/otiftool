@@ -75,18 +75,31 @@ def fetch_data():
         cursor.close()
 
         cursor = conn.cursor(dictionary=True)
-        query3= f""" SELECT ROUND ( ( ( SELECT SUM(change_level) * 2 FROM 
-						( 	SELECT change_level 
-							FROM cmr_db.S{number}_Data 
-							WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
-							ORDER BY S_no DESC
-							LIMIT 30 ) tmp where change_level>0 ) 
-						) * (
-							SELECT weight_per_mm
-							FROM Material_Weight_Factor
-							WHERE Sensor_No = {number} LIMIT 1 
-						), 2
-                    ) AS consumption_rate;
+        query3= f""" SELECT 
+    ROUND(
+        CASE 
+            WHEN (SELECT Level_MM 
+                  FROM cmr_db.S{number}_Data 
+                  WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE() 
+                  ORDER BY time DESC 
+                  LIMIT 1) <> 0
+            THEN 
+                (SELECT SUM(change_level) * 2
+                 FROM (
+                     SELECT change_level
+                     FROM cmr_db.S{number}_Data
+                     WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
+                     ORDER BY time DESC
+                     LIMIT 30
+                 ) tmp 
+                 WHERE change_level > 0) * 
+                (SELECT weight_per_mm
+                 FROM Material_Weight_Factor
+                 WHERE Sensor_No = {number}
+                 LIMIT 1)
+            ELSE 0
+        END, 2
+    ) AS consumption_rate;
                 """
         cursor.execute(query3)
         consumption_data = cursor.fetchone()
