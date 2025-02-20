@@ -40,12 +40,12 @@ function populateMachineTable(data) {
             <td>${machine.Machine_No}</td>
             <td>${machine.Level_MM}</td>
             <td>${
-                machine.Metal_Available_KG || "N/A"
+                machine.Metal_Available_KG 
             }</td>  <!-- Metal Available (KG) -->
-            <td>${machine.Consumption_Rate || "N/A"}</td>
+            <td>${machine.Consumption_Rate }</td>
             <td>${machine.Refilling_Time}</td>
             <td>${machine.Otif_per}</td>
-            <td>${machine.Availability_per || "N/A"}</td>
+            <td>${machine.Availability_per}</td>
             <td>${machine.W_Condition}</td>
             <td>${machine.Status}</td>
         </tr>
