@@ -128,30 +128,23 @@ def fetch_data():
         cursor.close()
 
         cursor = conn.cursor(dictionary=True)
-        query6 = f""" SELECT ROUND 
-					( ( (
-							(SELECT Level_MM FROM S{number}_Data LIMIT 1) - 
-							(SELECT Low_Level FROM Level_Limit LIMIT 1)
-					) / (
-							SELECT ROUND
-                    ( ( (
-							SELECT SUM(change_level) * 2 FROM 
-							(
-								SELECT `Change_Level`
-								FROM `S{number}_Data`
-								WHERE 1=1
-								ORDER BY `S_no` DESC
-								LIMIT 30
-							) tmp where change_level>0
-					) ) * (
-							SELECT weight_per_mm
-							FROM Material_Weight_Factor
-							WHERE Sensor_No = {number}
-					), 2 ) ) ) * 60 * (
-							SELECT weight_per_mm
-							FROM Material_Weight_Factor
-							WHERE Sensor_No = {number}
-					), 2 ) AS Refilling_Time;
+        query6 = f""" SELECT ROUND(
+            (
+                (SELECT Level_MM FROM S{number}_Data  order by s_no desc LIMIT 1) - (SELECT Low_Level FROM Level_Limit LIMIT 1)
+            ) * 30
+            /
+            (
+                SELECT SUM(change_level)
+                FROM (
+                    SELECT Change_Level 
+                    FROM S{number}_Data
+                    WHERE 1 = 1
+                    ORDER BY S_No DESC
+                    LIMIT 30
+                ) tmp
+                WHERE change_level > 0
+            ), 2
+        ) AS Refilling_Time;
 				"""
         cursor.execute(query6)
         refilling_data = cursor.fetchone()
