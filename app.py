@@ -141,23 +141,29 @@ def fetch_data():
         cursor.close()
 
         cursor = conn.cursor(dictionary=True)
-        query6 = f""" SELECT ROUND(
-            (
-                (SELECT Level_MM FROM S{number}_Data  order by s_no desc LIMIT 1) - (SELECT Low_Level FROM Level_Limit LIMIT 1)
-            ) * 30
-            /
-            (
-                SELECT SUM(change_level)
-                FROM (
-                    SELECT Change_Level 
-                    FROM S{number}_Data
-                    WHERE 1 = 1
-                    ORDER BY S_No DESC
-                    LIMIT 30
-                ) tmp
-                WHERE change_level > 0
-            ), 2
-        ) AS Refilling_Time;
+        query6 = f""" SELECT 
+    IFNULL(ROUND(
+        (
+            (SELECT Level_MM 
+             FROM S{number}_Data
+             ORDER BY s_no DESC
+             LIMIT 1) 
+            - (SELECT Low_Level 
+               FROM Level_Limit 
+               LIMIT 1)
+        ) * 30 /
+        (
+            SELECT SUM(change_level)
+            FROM (
+                SELECT Change_Level 
+                FROM S{number}_Data
+                WHERE 1 = 1
+                ORDER BY S_No DESC
+                LIMIT 30
+            ) tmp
+            WHERE change_level > 0
+        ), 2), 0) AS Refilling_Time;
+
 				"""
         cursor.execute(query6)
         refilling_data = cursor.fetchone()
