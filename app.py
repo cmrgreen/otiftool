@@ -215,6 +215,8 @@ def login():
                 return redirect(url_for('index'))  # Redirect to index if livedash is True
             elif user['misdash']:
                 return redirect(url_for('mis'))  # Redirect to mis if misdash is True
+	    elif user['rawdata']:
+                return redirect(url_for('rawdata'))
             else:
                 return 'No valid permissions for this user.'  # Handle no permissions case
         else:
@@ -238,12 +240,56 @@ def mis():
     return render_template('mis.html')  # Serve the mis.html page
 
 
+@app.route('/rawdata')
+def rawdata():
+    return render_template('raw.html')  # Serve the mis.html page
+
+
 # Route to render index.html
 # @app.route('/')
 # def index():
 #     return render_template('index.html')
 
 
+@app.route('/get_rawdata', methods=['POST'])
+def get_rawdata():
+    from_date = request.form['from_date']
+    to_date = request.form['to_date']
+    sensor_selected = request.form['sensor_number']
+
+    print(f"From Date: {from_date}")
+    print(f"To Date: {to_date}")
+    print(f"Sensor Selected: {sensor_selected}")
+
+    # Convert from_date and to_date to the desired format for the SQL query
+    from_date = datetime.strptime(from_date, '%Y-%m-%dT%H:%M').strftime('%m-%d-%Y %H:%M:%S')
+    to_date = datetime.strptime(to_date, '%Y-%m-%dT%H:%M').strftime('%m-%d-%Y %H:%M:%S')
+
+    print(f"After change From Date: {from_date}")
+    print(f"After Change To Date: {to_date}")
+
+    # Create table name dynamically based on sensor number
+    table_name = f"S{sensor_selected}_Data"
+
+    # Query to get all data from the dynamic table
+    query = f"""
+        SELECT *
+        FROM {table_name}
+        WHERE time BETWEEN %s AND %s
+        ORDER BY time DESC;
+    """
+
+    # Open database connection and execute the query
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(query, (from_date, to_date))
+    result = cursor.fetchall()
+
+    # Close the connection
+    cursor.close()
+    conn.close()
+
+    return jsonify(result)
 
 @app.route('/get_report', methods=['POST'])
 def get_report():
