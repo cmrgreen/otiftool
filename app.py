@@ -215,8 +215,8 @@ def login():
                 return redirect(url_for('index'))  # Redirect to index if livedash is True
             elif user['misdash']:
                 return redirect(url_for('mis'))  # Redirect to mis if misdash is True
-	    elif user['rawdata']:
-		return redirect(url_for('rawdata'))
+            elif user['rawdata']:
+                return redirect(url_for('rawdata'))
             else:
                 return 'No valid permissions for this user.'  # Handle no permissions case
         else:
