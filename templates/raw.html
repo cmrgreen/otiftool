@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raw Data Sensor Application</title>
+    <link rel="icon" type="image/x-icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI3j5SmxBFc-8uem8VkKEUDfQC5UJQeMup4Q&s">
+
+    <link rel="stylesheet" href="static/css/styles3.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script> <!-- SheetJS Library -->
+    <script>
+        function myFunction(event) {
+    event.preventDefault();  // Prevent the default action of the button (form submission)
+    document.getElementById("myDropdown").classList.toggle("show");  // Toggle dropdown visibility
+}
+
+window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn') && !event.target.matches('.dropdown-content a')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+
+
+        $(document).ready(function() {
+            // Capture the sensor number when a dropdown item is selected
+            $('#myDropdown a').click(function() {
+                var sensorNumber = $(this).text();
+                $('#sensor-number').val(sensorNumber); // Store in hidden input field
+                $('#selected-sensor').text('Selected Sensor: ' + sensorNumber); // Display the selected sensor
+                $('#myDropdown').removeClass('show'); // Hide the dropdown
+            });
+
+            // Submit the form via AJAX
+            $('#date-form').submit(function(event) {
+                event.preventDefault(); // Prevent the form from submitting normally
+
+                var fromDate = $('#from-date').val();
+                var toDate = $('#to-date').val();
+                var sensorNumber = $('#sensor-number').val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/get_rawdata',
+                    data: {
+                        from_date: fromDate,
+                        to_date: toDate,
+                        sensor_number: sensorNumber
+                    },
+                    success: function(response) {
+                        // Clear any existing rows
+                        $('#report-table tbody').empty();
+
+                        // Ensure the headers stay the same
+                        if ($('#report-table thead tr').length === 0) {
+                            var headerHtml = `
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Machine Number</th>
+                                    <th>Working</th>
+                                    <th>Sensor Number</th>
+                                    <th>Level %</th>
+                                    <th>Level MM</th>
+                                    <th>Status</th>
+                                    <th>Change Level</th>
+                                    <th>S_No</th>
+                                </tr>
+                            `;
+                            $('#report-table thead').html(headerHtml);
+                        }
+
+                        // Append new rows from the response data
+                        response.forEach(function(row) {
+                            var rowHtml = '<tr>';
+                            for (var key in row) {
+                                if (row.hasOwnProperty(key)) {
+                                    rowHtml += `<td>${row[key]}</td>`;
+                                }
+                            }
+                            rowHtml += '</tr>';
+                            $('#report-table tbody').append(rowHtml);
+                        });
+                    }
+                });
+            });
+
+            // Export to Excel functionality
+            $('#export-btn').click(function() {
+                // Get the table element
+                var table = document.getElementById('report-table');
+
+                // Create a workbook from the table
+                var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet 1" });
+
+                // Export the workbook as an Excel file
+                XLSX.writeFile(wb, 'report.xlsx');
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <img src="static/css/Rockman-Industries-Logo.88475a3a.jpg" alt="Logo" class="logo">
+            <h1>Raw Data Sensor Application</h1>
+        </div>
+    </header>
+    <div class="form-container">
+        <form id="date-form">
+            <label for="from-date">From:</label>
+            <input type="datetime-local" id="from-date" name="from-date" required>
+    
+            <label for="to-date">To:</label>
+            <input type="datetime-local" id="to-date" name="to-date" required>
+    
+            <div class="dropdown">
+                <button onclick="myFunction(event)" class="dropbtn">Select Sensor</button>
+                <div id="myDropdown" class="dropdown-content">
+                    <a href="javascript:void(0)">1</a>
+                    <a href="javascript:void(0)">2</a>
+                    <a href="javascript:void(0)">3</a>
+                    <a href="javascript:void(0)">4</a>
+                    <a href="javascript:void(0)">5</a>
+                    <a href="javascript:void(0)">6</a>
+                    <a href="javascript:void(0)">7</a>
+                    <a href="javascript:void(0)">8</a>
+                </div>
+            </div>
+            
+    
+            <input type="hidden" id="sensor-number" name="sensor-number" required>
+    
+            <button type="submit">Submit</button>
+    
+            <p id="selected-sensor">Selected Sensor: None</p>
+    
+            <button id="export-btn">Export to Excel</button>
+
+            <!-- <button onclick="window.location.href='{{ url_for('graph') }}'">Graphical Analysis</button> -->
+
+            <button id="graphButton">Graphical Analysis</button>
+
+<script>
+    document.getElementById('graphButton').addEventListener('click', function() {
+        window.location.href = '{{ url_for("graph") }}';
+    });
+</script>
+
+            
+        </form>
+    </div>
+    
+    <div class="table-container">
+        <table id="report-table">
+            <thead>
+                <!-- Headers will be manually set here, they will not be replaced by the data -->
+                <th>Date</th>
+                <th>Time</th>
+                <th>Machine Number</th>
+                <th>Working</th>
+                <th>Sensor Number</th>
+                <th>Level %</th>
+                <th>Level MM</th>
+                <th>Status</th>
+                <th>Change Level</th>
+                <th>S_No</th>
+            </thead>
+            <tbody>
+                <!-- Data will be dynamically filled here -->
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
