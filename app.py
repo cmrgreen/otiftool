@@ -148,7 +148,7 @@ def fetch_data():
 							FROM Level_Limit 
 							WHERE Sensor_No = {number}
 						)
-					AND W_Condition = 'Stopped' and Level_MM < 150;
+					AND W_Condition = 'Stopped' and Level_MM > 150;
 				"""
         cursor.execute(query5)
         otif_data = cursor.fetchone()
