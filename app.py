@@ -81,7 +81,7 @@ def fetch_data():
             WHEN (SELECT Level_MM 
                   FROM cmr_db.S{number}_Data 
                   WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE() 
-                  ORDER BY time DESC 
+                  ORDER BY S_no DESC 
                   LIMIT 1) <> 0
             THEN 
                 (SELECT SUM(change_level) * 2
@@ -89,7 +89,7 @@ def fetch_data():
                      SELECT change_level
                      FROM cmr_db.S{number}_Data
                      WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
-                     ORDER BY time DESC
+                     ORDER BY S_no DESC
                      LIMIT 30
                  ) tmp 
                  WHERE change_level > 0) * 
