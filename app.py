@@ -78,12 +78,14 @@ def fetch_data():
         query3= f""" SELECT 
     ROUND(
         CASE 
-            WHEN (SELECT Level_MM 
-                  FROM cmr_db.S{number}_Data 
-                  WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE() 
-                  ORDER BY S_no DESC 
-                  LIMIT 1) <> 0
-            THEN 
+            WHEN 
+                (SELECT Level_MM 
+                 FROM cmr_db.S{number}_Data 
+                 WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE() 
+                 ORDER BY S_no DESC 
+                 LIMIT 1) < 120
+            THEN 0
+            ELSE 
                 (SELECT SUM(change_level) * 2
                  FROM (
                      SELECT change_level
@@ -97,7 +99,6 @@ def fetch_data():
                  FROM Material_Weight_Factor
                  WHERE Sensor_No = {number}
                  LIMIT 1)
-            ELSE 0
         END, 2
     ) AS consumption_rate;
                 """
