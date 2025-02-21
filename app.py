@@ -107,16 +107,29 @@ def fetch_data():
         cursor.close()
 
         cursor = conn.cursor(dictionary=True)
-        query4 = f""" SELECT ROUND
-					( ( (
-						SELECT ROUND((mw.Weight_per_mm * s{number}_Data.Level_MM), 2) AS metalavailinkg
-						FROM Material_Weight_Factor mw
-						LEFT JOIN S{number}_Data S{number}_Data on s{number}_Data.Machine_No = mw.Machine_No
-						WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
-						ORDER BY s{number}_Data.Time DESC LIMIT 1
-                    ) / (
-						SELECT Furnace_Depth*Weight_per_mm FROM Material_Weight_Factor WHERE Sensor_No = {number} LIMIT 1
-                    ) ) * 100, 2) AS availability_per;
+        query4 = f""" SELECT 
+    CASE 
+        WHEN (SELECT Level_MM 
+              FROM S{number}_Data 
+              ORDER BY s_no DESC 
+              LIMIT 1) > 120 THEN 
+            ROUND(
+                ((
+                    SELECT ROUND((mw.Weight_per_mm * s{number}_Data.Level_MM), 2)
+                    FROM Material_Weight_Factor mw
+                    LEFT JOIN S{number}_Data S{number}_Data ON s{number}_Data.Machine_No = mw.Machine_No
+                    WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
+                    ORDER BY s{number}_Data.Time DESC 
+                    LIMIT 1
+                ) / (
+                    SELECT Furnace_Depth * Weight_per_mm 
+                    FROM Material_Weight_Factor 
+                    WHERE Sensor_No = {number} 
+                    LIMIT 1
+                )) * 100, 2
+            )
+        ELSE 0
+    END AS availability_per;
                 """
         cursor.execute(query4)
         availability_data = cursor.fetchone()
