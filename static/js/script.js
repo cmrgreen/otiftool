@@ -30,29 +30,103 @@ setInterval(updateDateTime, 1000);
 updateDateTime();
 
 // Populate the machine table with data from the backend
+// function populateMachineTable(data) {
+//     const tableBody = document.querySelector("#machineTable tbody");
+//     tableBody.innerHTML = data
+//         .map(
+//             (machine) => `
+//         <tr>
+//             <td>${machine.Sensor_No}</td>
+//             <td>${machine.Machine_No}</td>
+//             <td>${machine.Level_MM}</td>
+//             <td>${
+//                 machine.Metal_Available_KG 
+//             }</td>  <!-- Metal Available (KG) -->
+//             <td>${machine.Consumption_Rate }</td>
+//             <td>${machine.Refilling_Time}</td>
+//             <td>${machine.Otif_per}</td>
+//             <td>${machine.Availability_per}</td>
+//             <td>${machine.W_Condition}</td>
+//             <td>${machine.Status}</td>
+//         </tr>
+//     `
+//         )
+//         .join("");
+// }
+
 function populateMachineTable(data) {
     const tableBody = document.querySelector("#machineTable tbody");
     tableBody.innerHTML = data
         .map(
-            (machine) => `
-        <tr>
-            <td>${machine.Sensor_No}</td>
-            <td>${machine.Machine_No}</td>
-            <td>${machine.Level_MM}</td>
-            <td>${
-                machine.Metal_Available_KG 
-            }</td>  <!-- Metal Available (KG) -->
-            <td>${machine.Consumption_Rate }</td>
-            <td>${machine.Refilling_Time}</td>
-            <td>${machine.Otif_per}</td>
-            <td>${machine.Availability_per}</td>
-            <td>${machine.W_Condition}</td>
-            <td>${machine.Status}</td>
-        </tr>
-    `
+            (machine) => {
+                // // Set background color for Working Condition cell
+                // let workingConditionStyle = "";
+                // if (machine.W_Condition === "Running") {
+                //     workingConditionStyle = "background-color: lightgreen;";
+                // } else if (machine.W_Condition === "Stopped") {
+                //     workingConditionStyle = "background-color: lightcoral;";
+                // }
+
+                // Set background color for Working Condition box
+                let workingConditionStyle = "";
+                let workingConditionText = machine.W_Condition;
+                if (machine.W_Condition === "Running") {
+                    workingConditionStyle = "border: 2px solid green; color: green; padding: 5px;"; // Green border for Running
+                } else if (machine.W_Condition === "Stopped") {
+                    workingConditionStyle = "border: 2px solid red; color: red; padding: 5px;"; // Red border for Stopped
+                }
+
+                
+                // Set text for Working Condition box
+                // let workingConditionStyle = "";
+                // let workingConditionText = machine.W_Condition;
+                // if (machine.W_Condition === "Running") {
+                //     workingConditionStyle = "border: 2px solid green; color: green; padding: 5px; display: block; text-align: center; width: fit-content; margin: 0 auto;"; // Green border for Running
+                // } else if (machine.W_Condition === "Stopped") {
+                //     workingConditionStyle = "border: 2px solid red; color: red; padding: 5px; display: block; text-align: center; width: fit-content; margin: 0 auto;"; // Red border for Stopped
+                // }
+                
+
+
+                // Set text color for OTIF column
+                let otifStyle = "";
+                if (parseFloat(machine.Otif_per) === 100.00) {
+                    otifStyle = "color: darkgreen;";  // Dark green for 100.00%
+                } else if (parseFloat(machine.Otif_per) < 100.00) {
+                    otifStyle = "color: red;";  // Red for values below 100.00%
+                }
+
+                // Set background color for Availability (%) column based on Level_MM
+                let availabilityStyle = "";
+                const levelMM = parseFloat(machine.Level_MM); // Convert Level_MM to number
+                if (levelMM < 285) {
+                    availabilityStyle = "background-color: #f0633c;";  // Red for Level_MM < 285
+                } else if (levelMM >= 285 && levelMM <= 399) {
+                    availabilityStyle = "background-color: #f2e63a;";  // Yellow for 285 <= Level_MM <= 399
+                } else if (levelMM > 399 && levelMM <= 570) {
+                    availabilityStyle = "background-color: #48db83;";  // Yellow for 399 < Level_MM <= 570
+                }
+
+                return `
+                    <tr>
+                        <td>${machine.Sensor_No}</td>
+                        <td>${machine.Machine_No}</td>
+                        <td>${machine.Level_MM}</td>
+                        <td>${machine.Metal_Available_KG}</td>  <!-- Metal Available (KG) -->
+                        <td>${machine.Consumption_Rate}</td>
+                        <td>${machine.Refilling_Time}</td>
+                        <td style="${otifStyle}">${machine.Otif_per}%</td> <!-- OTIF column with color change -->
+                        <td style="${availabilityStyle}">${machine.Availability_per}%</td> <!-- Availability column with background color -->
+                        <td style="${workingConditionStyle}">${machine.W_Condition}</td> <!-- Working Condition with background color -->
+                        <td>${machine.Status}</td>
+                    </tr>
+                `;
+            }
         )
         .join("");
 }
+
+
 
 // Update the Overall Consumption Rate box with fetched data
 function updateConsumptionRate(data) {
