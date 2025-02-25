@@ -6,6 +6,24 @@ body {
 }
 /* 10:53 PM */
 
+.header-container {
+    display: flex; /* Aligns children in a single line */
+    align-items: center; /* Vertically center items */
+}
+
+.logo {
+    width: 120px; /* Adjust the width to fit the design */
+    height: auto; /* Keep the aspect ratio of the logo */
+    margin-bottom: 20px; 
+    border-radius: 6%;
+    margin-right: 100px; /* Space between the two logos */
+}
+
+.header-container img:last-child {
+    margin-left: 70px; /* Space between the heading and second logo */
+}
+
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
