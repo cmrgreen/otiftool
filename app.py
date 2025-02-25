@@ -64,7 +64,7 @@ def fetch_data():
         cursor = conn.cursor(dictionary=True)
 
         cursor = conn.cursor(dictionary=True)
-        query2= f""" SELECT ROUND((mw.Weight_per_mm * s{number}_Data.Level_MM), 2) AS metalavailinkg
+        query2= f""" SELECT ROUND((mw.Weight_per_mm * s{number}_Data.Level_MM), 0) AS metalavailinkg
 					FROM Material_Weight_Factor mw
 					LEFT JOIN S{number}_Data S{number}_Data on s{number}_Data.Machine_No = mw.Machine_No
 					WHERE STR_TO_DATE(s{number}_Data.Date, '%d-%m-%Y') = CURDATE()
@@ -99,7 +99,7 @@ def fetch_data():
                  FROM Material_Weight_Factor
                  WHERE Sensor_No = {number}
                  LIMIT 1)
-        END, 2
+        END, 0
     ) AS consumption_rate;
                 """
         cursor.execute(query3)
@@ -126,7 +126,7 @@ def fetch_data():
                     FROM Material_Weight_Factor 
                     WHERE Sensor_No = {number} 
                     LIMIT 1
-                )) * 100, 2
+                )) * 100, 0
             )
         ELSE 0
     END AS availability_per;
@@ -181,7 +181,7 @@ def fetch_data():
                         LIMIT 30
                     ) tmp
                     WHERE change_level > 0
-                ), 2), 0)
+                ), 0), 0)
         ELSE 0
     END AS Refilling_Time;
 
