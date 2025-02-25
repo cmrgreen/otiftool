@@ -101,7 +101,7 @@ function populateMachineTable(data) {
                 const levelMM = parseFloat(machine.Level_MM); // Convert Level_MM to number
                 if (levelMM < 285) {
                     availabilityStyle = "background-color: #f0633c;";  // Red for Level_MM < 285
-                } else if (levelMM >= 285 && levelMM <= 399) {
+                } else if (levelMM >= 285 && levelMM < 399) {
                     availabilityStyle = "background-color: #f2e63a;";  // Yellow for 285 <= Level_MM <= 399
                 } else if (levelMM >= 399) {
                     availabilityStyle = "background-color: #48db83;";  // Yellow for 399 < Level_MM <= 570
