@@ -402,7 +402,7 @@ SELECT
                  SELECT change_level
                  FROM {table_name} 
                  WHERE change_level > 0 
-                 AND time BETWEEN %s AND %s
+                 AND time BETWEEN %s AND %s And Level_MM>120
                  ORDER BY time DESC
              ) tmp
         )/
