@@ -21,7 +21,15 @@ body {
     height: auto; /* Keep the aspect ratio of the logo */
     margin-bottom: 20px; /* Space between logo and welcome message */
     border-radius: 6%;
+    margin-right: 20px; /* Space between the two logos */
 }
+
+/* Header container to align logos */
+.header-container {
+    display: flex; /* Aligns children in a single line */
+    align-items: center; /* Vertically center items */
+}
+
 
 /* Welcome Message Styling */
 .welcome-message {
