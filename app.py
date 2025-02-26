@@ -397,7 +397,7 @@ def get_report():
 SELECT 
     ROUND(
         (
-            (SELECT SUM(change_level) * 2
+            (SELECT SUM(change_level) 
              FROM (
                  SELECT change_level
                  FROM {table_name} 
