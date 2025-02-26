@@ -326,7 +326,7 @@ def get_report():
 
     consum_para = f"""
        
-            SELECT TIMESTAMPDIFF(HOUR, %s, %s)
+            SELECT ROUND(TIMESTAMPDIFF(MINUTE, %s, %s) / 60.0, 2) AS hours;
 """
 
     print(consum_para)
